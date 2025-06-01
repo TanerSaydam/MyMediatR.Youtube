@@ -6,6 +6,7 @@ public static class ServiceRegistrar
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        services.AddTransient<ISender, Sender>();
         services.AddTransient<IRequestHandler<ProductCreateCommand>, ProductCreateCommandHandler>();
         //services.AddMediatR(cfr =>
         //{
