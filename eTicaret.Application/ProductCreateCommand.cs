@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using TS.MediatR;
 
 namespace eTicaret.Application;
 public sealed record ProductCreateCommand(

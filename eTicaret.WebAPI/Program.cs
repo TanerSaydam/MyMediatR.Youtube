@@ -1,5 +1,5 @@
 using eTicaret.Application;
-using MediatR;
+using TS.MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +10,10 @@ var app = builder.Build();
 app.MapGet("/", () => "Hello World!");
 
 app.MapPost("/products",
-    async (ProductCreateCommand request, ISender sender, CancellationToken cancellationToken) =>
+    async (ProductCreateCommand request, IRequestHandler<ProductCreateCommand> requestHandler, CancellationToken cancellationToken) =>
     {
-        await sender.Send(request, cancellationToken);
+        await requestHandler.Handle(request, cancellationToken);
+        //await sender.Send(request, cancellationToken);
 
         return new { Message = "Create product is successful" };
     });
