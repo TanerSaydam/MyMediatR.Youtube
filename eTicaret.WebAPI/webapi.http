@@ -1,0 +1,11 @@
+GET https://localhost:7190
+
+###
+
+POST https://localhost:7190/products
+Content-Type: application/json
+
+{
+    "name":"Computer",
+    "price":10000
+}
