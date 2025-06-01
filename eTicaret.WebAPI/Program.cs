@@ -15,6 +15,14 @@ app.MapGet("/", (IServiceProvider serviceProvider) =>
     return res;
 });
 
+app.MapGet("/products",
+    async (ISender sender, CancellationToken cancellationToken) =>
+    {
+        var res = await sender.Send(new ProductGetAllQuery(), cancellationToken);
+
+        return res;
+    });
+
 app.MapPost("/products",
     async (ProductCreateCommand request, ISender sender, CancellationToken cancellationToken) =>
     {

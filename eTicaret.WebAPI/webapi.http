@@ -9,3 +9,7 @@ Content-Type: application/json
     "name":"Computer",
     "price":10000
 }
+
+###
+GET https://localhost:7190/products
+
