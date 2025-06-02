@@ -13,6 +13,7 @@ public static class ServiceRegistrar
         var config = new MediatROptions();
         options(config);
 
+        #region IReuqestHandler
         foreach (var assembly in config.Assemblies)
         {
             var types = assembly.GetTypes().Where(t => !t.IsInterface && !t.IsAbstract);
@@ -33,7 +34,9 @@ public static class ServiceRegistrar
                 services.AddTransient(item.Interface, item.Impletation);
             }
         }
+        #endregion
 
+        #region IPipelineBehavior
         foreach (var pipeline in config.PipelineBehaviors)
         {
             var genericArg = pipeline.GetGenericArguments().Length;
@@ -51,6 +54,26 @@ public static class ServiceRegistrar
                 throw new ArgumentOutOfRangeException(nameof(genericArg));
             }
         }
+        #endregion
+
+
+        #region INotificationHandler
+        foreach (var assembly in config.Assemblies)
+        {
+            var types = assembly.GetTypes().Where(t => !t.IsInterface && !t.IsAbstract);
+
+            var handlerTypes = types
+                .SelectMany(t => t
+                    .GetInterfaces()
+                    .Where(t => t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(INotificationHandler<>)))
+                    .Select(s => new { Interface = s, Implementation = t }));
+
+            foreach (var handler in handlerTypes)
+            {
+                services.AddTransient(handler.Interface, handler.Implementation);
+            }
+        }
+        #endregion
 
         return services;
     }

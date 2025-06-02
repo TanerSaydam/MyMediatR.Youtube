@@ -1,5 +1,5 @@
 ﻿using eTicaret.Application.Behaviors;
-using eTicaret.Domain.Events;
+using eTicaret.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using TS.MediatR;
 
@@ -10,14 +10,11 @@ public static class ServiceRegistrar
     {
         services.AddMediatR(configure =>
         {
-            configure.AddRegisterAssemblies(typeof(ServiceRegistrar).Assembly);
+            configure.AddRegisterAssemblies(typeof(ServiceRegistrar).Assembly, typeof(Product).Assembly);
             configure.AddOpenBehavior(typeof(LogBehavior<>));
             configure.AddOpenBehavior(typeof(LogBehavior<,>));
             configure.AddOpenBehavior(typeof(ValidationBehavior<>));
         });
-
-        services.AddTransient(
-            typeof(INotificationHandler<ProductDomainEvent>), typeof(ProductSendEmailDomainEventHandler));
 
         return services;
     }

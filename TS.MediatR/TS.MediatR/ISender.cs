@@ -89,8 +89,15 @@ public sealed class Sender(
 
         var interfaceType = typeof(INotificationHandler<>).MakeGenericType(notification.GetType());
 
-        var handler = sp.GetService(interfaceType);
-        var method = interfaceType.GetMethod("Handle")!;
-        await (Task)method.Invoke(handler, new object[] { notification, cancellationToken, })!;
+        var handlers = (IEnumerable<object>)sp.GetServices(interfaceType)!;
+
+        var tasks = handlers
+            .Select(handler =>
+            {
+                var method = interfaceType.GetMethod("Handle")!;
+                return (Task)method.Invoke(handler, new object[] { notification, cancellationToken, })!;
+            }).ToArray();
+
+        await Task.WhenAll(tasks);
     }
 }
