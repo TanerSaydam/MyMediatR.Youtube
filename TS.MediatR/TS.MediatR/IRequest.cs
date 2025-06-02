@@ -13,3 +13,23 @@ public interface IRequestHandler<TRequest, TResponse> where TRequest : IRequest<
 
 public delegate Task RequesteHandlerDelete();
 public delegate Task<TResponse> RequesteHandlerDelete<TResponse>();
+
+public interface IPipelineBehavior<TRequest>
+    where TRequest : IRequest
+{
+    Task Handle(
+        TRequest request,
+        RequesteHandlerDelete next,
+        CancellationToken cancellationToken = default
+        );
+}
+
+public interface IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    Task<TResponse> Handle(
+        TRequest request,
+        RequesteHandlerDelete<TResponse> next,
+        CancellationToken cancellationToken = default
+        );
+}

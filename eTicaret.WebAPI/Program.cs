@@ -24,7 +24,10 @@ app.MapGet("/products",
     });
 
 app.MapPost("/products",
-    async (ProductCreateCommand request, ISender sender, CancellationToken cancellationToken) =>
+    async (
+        ProductCreateCommand request,
+        ISender sender,
+        CancellationToken cancellationToken) =>
     {
         await sender.Send(request, cancellationToken);
 

@@ -14,30 +14,70 @@ public sealed class Sender(
     public async Task Send(IRequest request, CancellationToken cancellationToken = default)
     {
         using var scoped = serviceProvider.CreateScope();
+        var sp = scoped.ServiceProvider;
+        var interfaceType = typeof(IRequestHandler<>).MakeGenericType(request.GetType());
+        var pipelineType = typeof(IPipelineBehavior<>).MakeGenericType(request.GetType());
 
         RequesteHandlerDelete handlerDelete = () =>
         {
-            var interfaceType = typeof(IRequestHandler<>).MakeGenericType(request.GetType());
-            var handler = scoped.ServiceProvider.GetRequiredService(interfaceType);
+            var handler = sp.GetRequiredService(interfaceType);
             var method = interfaceType.GetMethod("Handle")!;
             return (Task)method.Invoke(handler, new object[] { request, cancellationToken })!;
         };
 
-        await handlerDelete();
+        var behaviors = (IEnumerable<object>)sp.GetServices(pipelineType);
+
+        var pipeline = behaviors
+            .Reverse()
+            .Aggregate(
+                handlerDelete,
+                (next, behavior) =>
+                {
+                    return () =>
+                    {
+                        var method = pipelineType.GetMethod("Handle")!;
+                        return (Task)method.Invoke(
+                            behavior,
+                            new object[] { request, next, cancellationToken })!;
+                    };
+                }
+            );
+
+        await pipeline();
     }
 
     public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         using var scoped = serviceProvider.CreateScope();
+        var sp = scoped.ServiceProvider;
+        var interfaceType = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(TResponse));
+        var pipelineType = typeof(IPipelineBehavior<,>).MakeGenericType(request.GetType(), typeof(TResponse));
 
         RequesteHandlerDelete<TResponse> handlerDelete = () =>
         {
-            var interfaceType = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(TResponse));
-            var handler = scoped.ServiceProvider.GetRequiredService(interfaceType);
+            var handler = sp.GetRequiredService(interfaceType);
             var method = interfaceType.GetMethod("Handle")!;
             return (Task<TResponse>)method.Invoke(handler, new object[] { request, cancellationToken })!;
         };
 
-        return await handlerDelete();
+        var behaviors = (IEnumerable<object>)sp.GetServices(pipelineType);
+
+        var pipeline = behaviors
+            .Reverse()
+            .Aggregate(
+                handlerDelete,
+                (next, behavior) =>
+                {
+                    return () =>
+                    {
+                        var method = pipelineType.GetMethod("Handle")!;
+                        return (Task<TResponse>)method.Invoke(
+                            behavior,
+                            new object[] { request, next, cancellationToken })!;
+                    };
+                }
+            );
+
+        return await pipeline();
     }
 }
