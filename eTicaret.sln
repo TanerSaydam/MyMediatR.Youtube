@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTicaret.WebAPI", "eTicaret
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TS.MediatR", "TS.MediatR\TS.MediatR\TS.MediatR.csproj", "{1D722435-84DA-4823-81B8-6FB254A98A16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTicaret.Domain", "eTicaret.Domain\eTicaret.Domain.csproj", "{0611BD14-1FB8-4812-B40F-554D6845909C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1D722435-84DA-4823-81B8-6FB254A98A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D722435-84DA-4823-81B8-6FB254A98A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D722435-84DA-4823-81B8-6FB254A98A16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0611BD14-1FB8-4812-B40F-554D6845909C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0611BD14-1FB8-4812-B40F-554D6845909C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0611BD14-1FB8-4812-B40F-554D6845909C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0611BD14-1FB8-4812-B40F-554D6845909C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

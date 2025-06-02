@@ -6,6 +6,7 @@ public interface ISender
 {
     Task Send(IRequest request, CancellationToken cancellationToken = default);
     Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
+    Task Publish(INotification notification, CancellationToken cancellationToken = default);
 }
 
 public sealed class Sender(
@@ -79,5 +80,17 @@ public sealed class Sender(
             );
 
         return await pipeline();
+    }
+
+    public async Task Publish(INotification notification, CancellationToken cancellationToken = default)
+    {
+        using var scoped = serviceProvider.CreateScope();
+        var sp = scoped.ServiceProvider;
+
+        var interfaceType = typeof(INotificationHandler<>).MakeGenericType(notification.GetType());
+
+        var handler = sp.GetService(interfaceType);
+        var method = interfaceType.GetMethod("Handle")!;
+        await (Task)method.Invoke(handler, new object[] { notification, cancellationToken, })!;
     }
 }

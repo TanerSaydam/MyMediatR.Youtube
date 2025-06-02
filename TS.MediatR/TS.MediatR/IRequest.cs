@@ -33,3 +33,9 @@ public interface IPipelineBehavior<TRequest, TResponse>
         CancellationToken cancellationToken = default
         );
 }
+
+public interface INotification { }
+public interface INotificationHandler<TNotification> where TNotification : INotification
+{
+    Task Handle(TNotification notification, CancellationToken cancellationToken = default);
+}
